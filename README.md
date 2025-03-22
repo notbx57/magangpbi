@@ -1,2 +1,2 @@
 # magangpbi
-What i do in pbi by luarsekolah
+Repo Magang LuarSekolah untuk week 1 - seterusnya
