@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // memastikan transisi working
         void formulirSection.offsetWidth;
         
-        // Apply visible styles
+        
         formulirSection.style.opacity = '1';
         formulirSection.style.visibility = 'visible';
         formulirSection.style.transform = 'translateY(0)';
