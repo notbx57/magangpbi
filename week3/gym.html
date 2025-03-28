@@ -10,24 +10,26 @@
 
     <!-- Header Section -->
     <header>
-        <nav>
-            <div class="logo">
-                <a href="#"><img src="logogym.jpeg" alt="PowerGYM Logo" style="height: 150px;"></a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#layanan">Layanan</a></li>
-                <li><a href="#testimoni">Testimoni</a></li>
-                <li><a href="#formulir">Formulir</a></li>
-            </ul>
-        </nav>
+<nav aria-label="Main Navigation">
+    <div class="logo">
+        <a href="#" aria-label="PowerGYM Logo"><img src="logogym.jpeg" alt="PowerGYM Logo" style="height: 50px;"></a>
+        <h2>PowerGYM</h2>
+    </div>
+    <ul class="nav-links">
+        <li><a href="#home" aria-label="Home">Home</a></li>
+        <li><a href="#layanan" aria-label="Layanan">Layanan</a></li>
+        <li><a href="#testimoni" aria-label="Testimoni">Testimoni</a></li>
+        <li><a href="#formulir" aria-label="Formulir">Formulir</a></li>
+    </ul>
+</nav>
+
     </header>
     
     <!-- Hero Section -->
     <section class="hero" id="home">
+
         <div class="hero-content">
             <h1>Selamat datang di PowerGYM</h1>
-            <img src="banner.jpeg" alt="Banner Hero" height="200" width="400">
             <p>
                 PowerGYM adalah tempat terbaik untuk fitness anda.
                 <br>Gabung sekarang untuk mendapatkan fasilitas super lengkap,
@@ -40,7 +42,7 @@
     <!-- Layanan section -->
     <section class="layanan" id="layanan">
         <div class="layanan-content">
-            <table border="true">
+            <table id="layanan-table" border="true">
                <tr>
                 <th>Basic</th>
                 <th>Premium</th>
@@ -74,15 +76,19 @@
         </div>
     </section>
     
+
+    <div class="joinbutton">
+        <button id="joinnowbutton">Join Sekarang!</button>
+    </div>
     <!-- Testimoni Section -->
 
     <section class="testimoni", id="testimoni">
         <div class="testimoni-content">
-            <h3>
+            <h2> 
                 Testimoni Member Kami 
-            </h3>
+            </h2>
 
-            <table border="true">
+            <table id="testimoni-table" border="true">
                 <tr>
                     <th>Ahmad Fadlan</th>
                     <th>Gymbro</th>
@@ -111,7 +117,7 @@
     </section>
 
     <!-- Form Section -->
-    <section class="formulir" id="formulir">
+    <section class="formulir" id="formulir" hidden>
         <div class="form-content">
             <h2>
                 Join PowerGYM Sekarang !
@@ -127,22 +133,30 @@
             </form>
 
             <p>Pilih Tier Anda</p>
-            <form>
-                <input type="radio" id="basic" name="Tier" value="basic">
-                <label for="basic">Basic</label><br>
-                <input type="radio" id="premium" name="Tier" value="premium">
-                <label for="premium">Premium</label><br>
-                <input type="radio" id="gymbro" name="Tier" value="gymbro">
-                <label for="basic">Gymbro</label><br>
-            </form>
+            <div id="tier" class="tier-container"> <!-- Changed form to div, added class -->
+                <div class="tier-option">
+                    <input type="radio" id="basic" name="Tier" value="basic" class="tier-radio">
+                    <label for="basic" class="tier-label">Basic</label>
+                </div>
+                <div class="tier-option">
+                    <input type="radio" id="premium" name="Tier" value="premium" class="tier-radio">
+                    <label for="premium" class="tier-label">Premium</label>
+                </div>
+                <div class="tier-option">
+                    <input type="radio" id="gymbro" name="Tier" value="gymbro" class="tier-radio">
+                    <label for="gymbro" class="tier-label">Gymbro</label> <!-- Fixed 'for' attribute -->
+                </div>
+            </div>
 
-            <form>
-                <br>
-                <input type="checkbox" name="accept" id="accept" value="true">
-                <label for="accept">Dengan berlangganan, anda setuju mengikuti S&K PowerGYM.</label>
-                <br>
-                <input type="submit" name="submit" id="submit" value="Berlangganan">
-            </form>
+            <div class="submit">
+                <form>
+                    <div class="checkbox">
+                        <input type="checkbox" name="accept" id="accept" value="true">
+                        <label for="accept">Dengan berlangganan, anda setuju mengikuti S&K PowerGYM.</label>
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Berlangganan">
+                </form>
+            </div>
         </div>
     </section>
 
@@ -152,5 +166,6 @@
         <p>&copy; 2025 PowerGYM. | Powered by PT Badan Sehat Indonesia.</p>
     </footer>
 
+    <script src="gym.js"></script>
 </body>
 </html>
