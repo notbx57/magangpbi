@@ -1,2 +1,3 @@
 # magangpbi
-Repo Magang LuarSekolah untuk week 1 - seterusnya
++Menambahkan Fungsi JS untuk submit form
++Revamp Styling css
