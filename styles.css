@@ -5,7 +5,6 @@ body {
     margin: 0;
     padding: 0;
     background-color: #542222;
-    overflow-x: hidden;
 }
 
 /* Header Styles */
@@ -199,7 +198,6 @@ nav {
 /* Layanan Section */
 .layanan {
     padding: 3rem 0;
-    overflow-x: scroll;
 }
 
 .layanan-content {
@@ -252,7 +250,6 @@ th {
 /* Testimoni Section */
 .testimoni {
     padding: 3rem 0;
-    overflow-x: scroll;
 }
 
 .testimoni-content {
