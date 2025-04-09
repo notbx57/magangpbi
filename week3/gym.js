@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const joinButton = document.querySelector('.joinbutton button');
+    const joinButton = document.querySelector('.joinbutton button')
     const formulirSection = document.getElementById('formulir');
 
     // Buat initial CSS
@@ -91,3 +91,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 }); 
+
+// Hamburger menu functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    const overlay = document.querySelector('.overlay');
+    const navItems = document.querySelectorAll('.nav-links a');
+    
+    function toggleMenu() {
+        hamburger.classList.toggle('active');
+        navLinks.classList.toggle('active');
+        overlay.classList.toggle('active');
+        document.body.classList.toggle('no-scroll');
+    }
+    
+    // Toggle menu when hamburger is clicked
+    hamburger.addEventListener('click', toggleMenu);
+    
+    // Close menu when overlay is clicked
+    overlay.addEventListener('click', toggleMenu);
+    
+    // Close menu when nav item is clicked
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            if (navLinks.classList.contains('active')) {
+                toggleMenu();
+            }
+        });
+    });
+    
+    // Add additional style to prevent scrolling when menu is open
+    document.head.insertAdjacentHTML('beforeend', 
+        '<style>.no-scroll{overflow:hidden;}</style>'
+    );
+});

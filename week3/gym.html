@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PowerGYM</title>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -10,19 +10,23 @@
 
     <!-- Header Section -->
     <header>
-<nav aria-label="Main Navigation">
-    <div class="logo">
-        <a href="#" aria-label="PowerGYM Logo"><img src="logogym.jpeg" alt="PowerGYM Logo" style="height: 50px;"></a>
-        <h2>PowerGYM</h2>
-    </div>
-    <ul class="nav-links">
-        <li><a href="#home" aria-label="Home">Home</a></li>
-        <li><a href="#layanan" aria-label="Layanan">Layanan</a></li>
-        <li><a href="#testimoni" aria-label="Testimoni">Testimoni</a></li>
-        <li><a href="" aria-label="Formulir">Formulir</a></li>
-    </ul>
-</nav>
-
+        <nav aria-label="Main Navigation">
+            <div class="logo">
+                <a href="#" aria-label="PowerGYM Logo"><img src="logogym.jpeg" alt="PowerGYM Logo" style="height: 50px;"></a>
+                <h2>PowerGYM</h2>
+            </div>
+            <button class="hamburger" aria-label="Menu Toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="#home" aria-label="Home">Home</a></li>
+                <li><a href="#layanan" aria-label="Layanan">Layanan</a></li>
+                <li><a href="#testimoni" aria-label="Testimoni">Testimoni</a></li>
+            </ul>
+        </nav>
+        <div class="overlay"></div>
     </header>
     
     <!-- Hero Section -->
