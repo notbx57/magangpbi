@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PowerGYM</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <nav aria-label="Main Navigation">
+            <div class="logo">
+                <a href="#" aria-label="PowerGYM Logo"><img src="logogym.jpeg" alt="PowerGYM Logo" style="height: 50px;"></a>
+                <h2>PowerGYM</h2>
+            </div>
+            <button class="hamburger" aria-label="Menu Toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="#home" aria-label="Home">Home</a></li>
+                <li><a href="#layanan" aria-label="Layanan">Layanan</a></li>
+                <li><a href="#testimoni" aria-label="Testimoni">Testimoni</a></li>
+            </ul>
+        </nav>
+        <div class="overlay"></div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+
+        <div class="hero-content">
+            <h1>Selamat datang di PowerGYM</h1>
+            <p>
+                PowerGYM adalah tempat terbaik untuk fitness anda.
+                <br>Gabung sekarang untuk mendapatkan fasilitas super lengkap,
+                <br>Personal Trainer yang berpengalaman,
+                <br>dan Reward lainnya!
+            </p>
+        </div>
+    </section>
+
+    <!-- Layanan section -->
+    <section class="layanan" id="layanan">
+        <div class="layanan-content">
+            <table id="layanan-table" border="true">
+               <tr>
+                <th>Basic</th>
+                <th>Premium</th>
+                <th>Gymbro</th>
+               </tr>
+
+               <tr>
+                <td>Akses 30+ Workout Plan dimanapun</td>
+                <td>Akses Semua Workout Plan dimanapun</td>
+                <td>Akses Lifetime Workout Plan dimanapun</td>
+               </tr>
+
+               <tr>
+                <td>Up to 10 Nutrition Plans</td>
+                <td>Up to 50 Nutrition Plans</td>
+                <td>Akses Semua Nutrition Plans</td>
+               </tr>
+
+               <tr>
+                <td>Akses Komunitas Discord PowerGYM</td>
+                <td>Akses Komunitas Discord + Role Pro</td>
+                <td>Akses Komunitas Discord + Role Gymbro + CEO exclusive</td>
+               </tr>
+
+               <tr>
+                <td><strong>Rp. </strong>150.000 / Bulan</td>
+                <td><strong>Rp. </strong>400.000 / Bulan</td>
+                <td><strong>Rp. </strong>1.000.000 / Bulan</td>
+               </tr>
+            </table>
+        </div>
+    </section>
+    
+
+    <div class="joinbutton">
+        <button id="joinnowbutton">Join Sekarang!</button>
+    </div>
+    <!-- Testimoni Section -->
+
+    <section class="testimoni", id="testimoni">
+        <div class="testimoni-content">
+            <h2> 
+                Testimoni Member Kami 
+            </h2>
+
+            <table id="testimoni-table" border="true">
+                <tr>
+                    <th>Ahmad Fadlan</th>
+                    <th>Gymbro</th>
+                    <th>★★★★★</th>
+                    <th>5.0</th>
+                    <th>Terimakasih PowerGYM, Saya bisa turun 15kg dalam 2 bulan karena coaching yang baik dari trainer saya, semoga layanan PowerGYM bertahan ya!</th>
+                </tr>
+
+                <tr>
+                    <th>Yaqut Thamrin</th>
+                    <th>Pro</th>
+                    <th>★★★★</th>
+                    <th>4.5</th>
+                    <th>Dari Nol, saya diajarkan cara melakukan workout yang efektif dan saya Alhamdulilah rutin dan saya menjadi lebih fit berkat PowerGYM!</th>
+                </tr>
+
+                <tr>
+                    <th>Kevin Tamarin</th>
+                    <th>Gymbro</th>
+                    <th>★★★★★</th>
+                    <th>5.0</th>
+                    <th>Awalnya saya ga percaya, tetapi setelah mengikuti PowerGYM Gymbro, saya belajar banyak tentang ilmu binaraga yang benar. Terimakasih PowerGYM.</th>
+                </tr>
+            </table>
+        </div>
+    </section>
+
+    <!-- Form Section -->
+    <section class="formulir" id="formulir" hidden>
+        <div class="form-content">
+            <h2>
+                Join PowerGYM Sekarang !
+            </h2>
+
+            <form>
+                <label for="nama">Nama:</label><br>
+                <input type="text" id="nama" name="nama"><br>
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email"><br>
+                <label for="telp">No. Telepon:</label><br>
+                <input type="text" id="telp" name="telp"><br>
+            </form>
+
+            <p>Pilih Tier Anda</p>
+            <div id="tier" class="tier-container"> <!-- Changed form to div, added class -->
+                <div class="tier-option">
+                    <input type="radio" id="basic" name="Tier" value="basic" class="tier-radio">
+                    <label for="basic" class="tier-label">Basic</label>
+                </div>
+                <div class="tier-option">
+                    <input type="radio" id="premium" name="Tier" value="premium" class="tier-radio">
+                    <label for="premium" class="tier-label">Premium</label>
+                </div>
+                <div class="tier-option">
+                    <input type="radio" id="gymbro" name="Tier" value="gymbro" class="tier-radio">
+                    <label for="gymbro" class="tier-label">Gymbro</label> <!-- Fixed 'for' attribute -->
+                </div>
+            </div>
+
+            <div class="submit">
+                <form>
+                    <div class="checkbox">
+                        <input type="checkbox" name="accept" id="accept" value="true">
+                        <label for="accept">Dengan berlangganan, anda setuju mengikuti S&K PowerGYM.</label>
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Berlangganan">
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 PowerGYM. | Powered by PT Badan Sehat Indonesia.</p>
+    </footer>
+
+    <script src="gym.js"></script>
+</body>
+</html>
