@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PowerGYM</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 </head>
 <body>
 
@@ -12,7 +12,7 @@
     <header>
         <nav aria-label="Main Navigation">
             <div class="logo">
-                <a href="#" aria-label="PowerGYM Logo"><img src="logogym.jpeg" alt="PowerGYM Logo" style="height: 50px;"></a>
+                <a href="#" aria-label="PowerGYM Logo"><img src="{{ asset('logogym.jpeg') }}" alt="PowerGYM Logo" style="height: 50px;"></a>
                 <h2>PowerGYM</h2>
             </div>
             <button class="hamburger" aria-label="Menu Toggle">
@@ -170,6 +170,6 @@
         <p>&copy; 2025 PowerGYM. | Powered by PT Badan Sehat Indonesia.</p>
     </footer>
 
-    <script src="gym.js"></script>
+    <script src="{{ asset('js/gym.js') }}"></script>
 </body>
 </html>
