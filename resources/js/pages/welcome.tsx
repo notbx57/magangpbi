@@ -153,7 +153,7 @@ export default function Welcome() {
                             </div>
                             <div className="bg-gray-900 p-8 rounded-lg transition-transform hover:scale-105">
                                 <div className="text-red-800 text-4xl mb-4">👨‍🏫</div>
-                                <h3 className="text-xl font-bold mb-4">Pelatih Pribadi Ahli</h3>
+                                <h3 className="text-xl font-bold mb-4">Trainer dan <Coach></Coach> Ahli</h3>
                                 <p className="text-gray-300">Pelatih bersertifikat kami memberikan bimbingan personal untuk membantu Anda mencapai hasil lebih cepat.</p>
                             </div>
                             <div className="bg-gray-900 p-8 rounded-lg transition-transform hover:scale-105">
