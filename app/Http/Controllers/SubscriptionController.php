@@ -18,7 +18,7 @@ class SubscriptionController extends Controller
         $subscriptions = Subscription::with(['user', 'membershipPlan'])
             ->latest()
             ->paginate(20);
-            
+
         return Inertia::render('Subscriptions/Index', [
             'subscriptions' => $subscriptions
         ]);
@@ -31,7 +31,7 @@ class SubscriptionController extends Controller
     {
         $members = User::where('role', 'member')->get();
         $plans = MembershipPlan::where('is_active', true)->get();
-        
+
         return Inertia::render('Subscriptions/Create', [
             'members' => $members,
             'plans' => $plans
@@ -50,9 +50,9 @@ class SubscriptionController extends Controller
             'end_date' => 'required|date|after:start_date',
             'status' => 'required|in:active,expired,cancelled',
         ]);
-        
+
         $subscription = Subscription::create($validated);
-        
+
         return redirect()->route('subscriptions.index')
             ->with('success', 'Subscription created successfully.');
     }
@@ -64,7 +64,7 @@ class SubscriptionController extends Controller
     {
         $subscription = Subscription::with(['user', 'membershipPlan', 'payments'])
             ->findOrFail($id);
-            
+
         return Inertia::render('Subscriptions/Show', [
             'subscription' => $subscription
         ]);
@@ -78,7 +78,7 @@ class SubscriptionController extends Controller
         $subscription = Subscription::findOrFail($id);
         $members = User::where('role', 'member')->get();
         $plans = MembershipPlan::where('is_active', true)->get();
-        
+
         return Inertia::render('Subscriptions/Edit', [
             'subscription' => $subscription,
             'members' => $members,
@@ -92,7 +92,7 @@ class SubscriptionController extends Controller
     public function update(Request $request, string $id)
     {
         $subscription = Subscription::findOrFail($id);
-        
+
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'membership_plan_id' => 'required|exists:membership_plans,id',
@@ -100,9 +100,9 @@ class SubscriptionController extends Controller
             'end_date' => 'required|date|after:start_date',
             'status' => 'required|in:active,expired,cancelled',
         ]);
-        
+
         $subscription->update($validated);
-        
+
         return redirect()->route('subscriptions.index')
             ->with('success', 'Subscription updated successfully.');
     }
@@ -114,35 +114,57 @@ class SubscriptionController extends Controller
     {
         $subscription = Subscription::findOrFail($id);
         $subscription->delete();
-        
+
         return redirect()->route('subscriptions.index')
             ->with('success', 'Subscription deleted successfully.');
     }
-    
+
     /**
      * Display the current user's subscription.
      */
     public function mySubscription()
     {
-        $user = auth()->user();
-        
+        $user = auth()->guard('web')->user();
+
         $subscription = Subscription::with('membershipPlan')
             ->where('user_id', $user->id)
             ->where('status', 'active')
             ->latest()
             ->first();
-            
+
         $allSubscriptions = Subscription::with('membershipPlan')
             ->where('user_id', $user->id)
             ->latest()
             ->get();
-            
+
         $availablePlans = MembershipPlan::where('is_active', true)->get();
-        
+
         return Inertia::render('Subscriptions/MySubscription', [
             'currentSubscription' => $subscription,
             'subscriptionHistory' => $allSubscriptions,
             'availablePlans' => $availablePlans
+        ]);
+    }
+
+    /**
+     * Update the status of a subscription via API.
+     */
+    public function updateStatus(Request $request, string $id)
+    {
+        $subscription = Subscription::findOrFail($id);
+
+        $validated = $request->validate([
+            'status' => 'required|in:active,expired,cancelled',
+        ]);
+
+        $subscription->update([
+            'status' => $validated['status']
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Subscription status updated successfully',
+            'subscription' => $subscription
         ]);
     }
 }

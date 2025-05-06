@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
@@ -13,14 +16,17 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('plan_id')->constrained('membership_plans')->onDelete('cascade');
             $table->decimal('amount', 10, 2);
-            $table->enum('payment_method', ['credit_card', 'bank_transfer']);
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->string('payment_method');
+            $table->string('status');
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('transactions');
     }
-}; 
+};

@@ -2,8 +2,8 @@ import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSep
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { type User } from '@/types';
-import { Link, router } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { LogOut, Settings, Menu } from 'lucide-react';
 
 interface UserMenuContentProps {
     user: User;
@@ -11,6 +11,7 @@ interface UserMenuContentProps {
 
 export function UserMenuContent({ user }: UserMenuContentProps) {
     const cleanup = useMobileNavigation();
+    const { auth } = usePage<{ auth: { user: { role: string } } }>().props;
 
     const handleLogout = () => {
         cleanup();
@@ -26,6 +27,14 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+                {auth.user.role === 'member' && (
+                    <DropdownMenuItem asChild>
+                        <Link className="block w-full" href={route('member.quick-menu')} as="button" prefetch onClick={cleanup}>
+                            <Menu className="mr-2" />
+                            Menu Cepat
+                        </Link>
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem asChild>
                     <Link className="block w-full" href={route('profile.edit')} as="button" prefetch onClick={cleanup}>
                         <Settings className="mr-2" />

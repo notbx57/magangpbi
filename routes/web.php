@@ -32,13 +32,82 @@ Route::middleware(['auth', 'verified'])->group(function () {
         if ($role === 'admin') {
             $totalRevenue = Payment::where('status', 'completed')->sum('amount');
 
+            // Get subscriptions data
+            $subscriptions = Subscription::with(['user', 'membershipPlan'])
+                ->latest()
+                ->get()
+                ->map(function ($subscription) {
+                    return [
+                        'id' => $subscription->id,
+                        'user_name' => $subscription->user->name,
+                        'plan_name' => $subscription->membershipPlan->name,
+                        'start_date' => $subscription->start_date,
+                        'end_date' => $subscription->end_date,
+                        'status' => $subscription->status,
+                        'created_at' => $subscription->created_at,
+                    ];
+                });
+
+            // Get recent activities (combination of payments and subscription changes)
+            $recentPayments = Payment::with('user')
+                ->latest()
+                ->take(5)
+                ->get()
+                ->map(function ($payment) {
+                    return [
+                        'id' => 'pay_' . $payment->id,
+                        'user_id' => $payment->user_id,
+                        'user_name' => $payment->user->name,
+                        'user_initials' => substr($payment->user->name, 0, 2),
+                        'description' => $payment->user->name . ' made a payment of $' . $payment->amount,
+                        'action_type' => 'payment',
+                        'created_at' => $payment->created_at,
+                        'time_ago' => $payment->created_at->diffForHumans(),
+                    ];
+                });
+
+            $recentSubscriptions = Subscription::with('user', 'membershipPlan')
+                ->latest()
+                ->take(5)
+                ->get()
+                ->map(function ($subscription) {
+                    $actionType = 'subscription';
+                    $description = $subscription->user->name . ' subscribed to ' . $subscription->membershipPlan->name . ' plan';
+
+                    if ($subscription->status === 'cancelled') {
+                        $description = $subscription->user->name . ' cancelled membership';
+                    } elseif ($subscription->status === 'expired') {
+                        $description = $subscription->user->name . '\'s membership expired';
+                    }
+
+                    return [
+                        'id' => 'sub_' . $subscription->id,
+                        'user_id' => $subscription->user_id,
+                        'user_name' => $subscription->user->name,
+                        'user_initials' => substr($subscription->user->name, 0, 2),
+                        'description' => $description,
+                        'action_type' => $actionType,
+                        'created_at' => $subscription->created_at,
+                        'time_ago' => $subscription->created_at->diffForHumans(),
+                    ];
+                });
+
+            // Combine and sort by created_at
+            $recentActivities = $recentPayments->concat($recentSubscriptions)
+                ->sortByDesc('created_at')
+                ->take(4)
+                ->values()
+                ->toArray();
+
             return Inertia::render('admindashboard', [
                 'stats' => [
                     'userCount' => $userCount,
                     'activeSubscriptions' => $activeSubscriptions,
                     'totalRevenue' => $totalRevenue,
                     'todayAttendance' => $todayAttendance,
-                ]
+                ],
+                'subscriptions' => $subscriptions,
+                'recentActivities' => $recentActivities
             ]);
         } elseif ($role === 'staff') {
             return Inertia::render('staffdashboard', [
@@ -157,8 +226,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
+// Member quick menu route
+Route::get('/member/quick-menu', [App\Http\Controllers\MemberController::class, 'quickMenu'])
+    ->middleware(['auth', 'verified'])
+    ->name('member.quick-menu');
 
 Route::middleware(['auth'])->group(function () {
+    // Member routes
+    Route::get('/members', [App\Http\Controllers\MemberController::class, 'index'])->name('members.index')->middleware('role:admin,staff');
+    Route::get('/members/create', [App\Http\Controllers\MemberController::class, 'create'])->name('members.create')->middleware('role:admin,staff');
+    Route::post('/members', [App\Http\Controllers\MemberController::class, 'store'])->name('members.store')->middleware('role:admin,staff');
+    Route::get('/members/{member}', [App\Http\Controllers\MemberController::class, 'show'])->name('members.show')->middleware('role:admin,staff');
+
     // Payment routes
     Route::get('/payments', [App\Http\Controllers\PaymentController::class, 'index'])->name('payments.index')->middleware('role:admin');
     Route::get('/payments/create', [App\Http\Controllers\PaymentController::class, 'create'])->name('payments.create');

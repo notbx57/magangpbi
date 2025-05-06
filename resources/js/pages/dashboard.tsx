@@ -56,6 +56,7 @@ export default function Dashboard() {
     const props = usePage<PageProps>().props;
     const { subscription, attendance, classes } = props;
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
     const [paymentMethod, setPaymentMethod] = useState('credit_card');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -111,6 +112,12 @@ export default function Dashboard() {
         setSuccess(null);
     };
 
+    const handleCloseSuccessModal = () => {
+        setIsSuccessModalOpen(false);
+        // Refresh the dashboard page after closing the success modal
+        router.visit('/dashboard', { replace: true });
+    };
+
     const handlePlanSelect = (planName: string) => {
         setSelectedPlan(planName);
     };
@@ -133,8 +140,11 @@ export default function Dashboard() {
                 payment_method: paymentMethod
             }, {
                 onSuccess: () => {
-                    // Redirect will be handled by the server
-                    // No need to do anything here
+                    // Show success modal instead of refreshing immediately
+                    setIsSubmitting(false);
+                    setIsModalOpen(false);
+                    setSuccess('Pembayaran Anda telah berhasil diproses!');
+                    setIsSuccessModalOpen(true);
                 },
                 onError: (errors) => {
                     if (errors.message && errors.message.includes('CSRF')) {
@@ -385,6 +395,32 @@ export default function Dashboard() {
                                     className="px-4 py-2 bg-red-800 text-white rounded-md text-sm font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isSubmitting ? 'Memproses...' : 'Selesaikan Pembayaran'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Payment Success Modal */}
+            {isSuccessModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg max-w-md w-full">
+                        <div className="p-6">
+                            <div className="flex flex-col items-center text-center">
+                                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                                    <svg className="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <h2 className="text-2xl font-bold mb-2">Pembayaran Berhasil!</h2>
+                                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                                    Terima kasih! Pembayaran Anda telah berhasil diproses. Anda sekarang dapat menikmati semua fitur dari paket yang Anda pilih.
+                                </p>
+                                <button
+                                    onClick={handleCloseSuccessModal}
+                                    className="px-6 py-2 bg-red-800 text-white rounded-md text-sm font-medium hover:bg-red-700"
+                                >
+                                    Kembali ke Dasbor
                                 </button>
                             </div>
                         </div>
