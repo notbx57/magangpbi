@@ -18,6 +18,17 @@ if (token) {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
+// Configure Inertia to use the CSRF token
+import { router } from '@inertiajs/react';
+if (token) {
+    const csrfToken = token.getAttribute('content');
+    if (csrfToken) {
+        router.on('before', (event) => {
+            event.detail.visit.headers['X-CSRF-TOKEN'] = csrfToken;
+        });
+    }
+}
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
