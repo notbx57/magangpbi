@@ -132,22 +132,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'classes' => $upcomingClasses,
                 'payment' => $paymentMethod ? [
                     'method' => $paymentMethod->payment_method,
-                    'last_four' => '4242', // Assuming a fixed last four digits for demo
-                    'exp_date' => '12/25', // Assuming a fixed expiration date for demo
+                    'last_four' => '4242',
+                    'exp_date' => '12/25',
                 ] : null
             ]);
         }
     })->name('dashboard');
 
-    // Gym Classes routes - visible to all authenticated users
+
     Route::get('gym-classes', [GymClassController::class, 'index'])->name('gym-classes.index');
     Route::get('gym-classes/{gymClass}', [GymClassController::class, 'show'])->name('gym-classes.show');
 
-    // Routes for booking and canceling gym classes - available to all users
+
     Route::post('gym-classes/{gymClass}/book', [GymClassController::class, 'book'])->name('gym-classes.book');
     Route::delete('gym-classes/{gymClass}/cancel', [GymClassController::class, 'cancelBooking'])->name('gym-classes.cancel');
 
-    // Management routes for gym classes - only for staff and admin
+    // only for staff and admin
     Route::middleware(['role:staff,admin'])->group(function () {
         Route::get('gym-classes/create', [GymClassController::class, 'create'])->name('gym-classes.create');
         Route::post('gym-classes', [GymClassController::class, 'store'])->name('gym-classes.store');
@@ -157,7 +157,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-// Payment and Transaction routes
+
 Route::middleware(['auth'])->group(function () {
     // Payment routes
     Route::get('/payments', [App\Http\Controllers\PaymentController::class, 'index'])->name('payments.index')->middleware('role:admin');
