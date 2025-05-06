@@ -1,4 +1,4 @@
-MAJEUR UPDATE : POWERGYM
+**MAJEUR UPDATE : POWERGYM** 💪
 
 Changelogs :
 - Ditulis dari awal karena menggunakan React (Inertia)
