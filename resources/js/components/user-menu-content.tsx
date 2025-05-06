@@ -15,7 +15,18 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
 
     const handleLogout = () => {
         cleanup();
-        router.flushAll();
+
+        // Get CSRF token
+        const token = document.head.querySelector('meta[name="csrf-token"]');
+        const csrfToken = token ? token.getAttribute('content') : '';
+
+        // Post to logout route with CSRF token
+        router.post(route('logout'), {}, {
+            headers: {
+                'X-CSRF-TOKEN': csrfToken || ''
+            },
+            onFinish: () => router.flushAll()
+        });
     };
 
     return (
@@ -44,10 +55,10 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-                <Link className="block w-full" method="post" href={route('logout')} as="button" onClick={handleLogout}>
+                <button className="block w-full text-left" onClick={handleLogout}>
                     <LogOut className="mr-2" />
                     Keluar
-                </Link>
+                </button>
             </DropdownMenuItem>
         </>
     );

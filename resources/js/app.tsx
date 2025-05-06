@@ -10,7 +10,7 @@ import axios from 'axios';
 window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-// Add CSRF token to all requests
+// Add CSRF token to axios requests
 const token = document.head.querySelector('meta[name="csrf-token"]');
 if (token) {
     window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.getAttribute('content');
@@ -18,16 +18,7 @@ if (token) {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
-// Configure Inertia to use the CSRF token
-import { router } from '@inertiajs/react';
-if (token) {
-    const csrfToken = token.getAttribute('content');
-    if (csrfToken) {
-        router.on('before', (event) => {
-            event.detail.visit.headers['X-CSRF-TOKEN'] = csrfToken;
-        });
-    }
-}
+// No need to import router since we're not using it
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
