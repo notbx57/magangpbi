@@ -32,7 +32,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         if ($role === 'admin') {
             $totalRevenue = Payment::where('status', 'completed')->sum('amount');
 
-            // Get subscriptions data
             $subscriptions = Subscription::with(['user', 'membershipPlan'])
                 ->latest()
                 ->get()
@@ -48,7 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                     ];
                 });
 
-            // Get recent activities (combination of payments and subscription changes)
+
             $recentPayments = Payment::with('user')
                 ->latest()
                 ->take(5)
@@ -185,7 +184,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                     ];
                 });
 
-            // Get payment method
+            //get metode pembayaran
             $paymentMethod = Payment::where('user_id', $user->id)
                 ->latest()
                 ->first();

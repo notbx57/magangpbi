@@ -18,7 +18,7 @@ class AdminDashboardController extends Controller
             'userCount' => User::count(),
             'activeSubscriptions' => Subscription::where('status', 'active')->count(),
             'totalRevenue' => Transaction::where('status', 'approved')->sum('amount'),
-            'todayAttendance' => 0, // This would need to be implemented based on your attendance tracking system
+            'todayAttendance' => 0, // Placeholder absen
         ];
 
         $subscriptions = Subscription::with(['user', 'membershipPlan'])
@@ -36,7 +36,7 @@ class AdminDashboardController extends Controller
                 ];
             });
 
-        // Get recent activities (combination of transactions and subscription changes)
+        // Recent activities untuk admin dashboard
         $recentActivities = $this->getRecentActivities();
 
         return Inertia::render('AdminDashboard', [
