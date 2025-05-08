@@ -32,6 +32,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         if ($role === 'admin') {
             $totalRevenue = Payment::where('status', 'completed')->sum('amount');
 
+            // Get all members
+            $members = User::where('role', 'member')
+                ->get(['id', 'name', 'email', 'role']);
+
             $subscriptions = Subscription::with(['user', 'membershipPlan'])
                 ->latest()
                 ->get()
@@ -106,7 +110,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
                     'todayAttendance' => $todayAttendance,
                 ],
                 'subscriptions' => $subscriptions,
-                'recentActivities' => $recentActivities
+                'recentActivities' => $recentActivities,
+                'members' => $members
             ]);
         } elseif ($role === 'staff') {
             return Inertia::render('staffdashboard', [
@@ -215,7 +220,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('gym-classes/{gymClass}/book', [GymClassController::class, 'book'])->name('gym-classes.book');
     Route::delete('gym-classes/{gymClass}/cancel', [GymClassController::class, 'cancelBooking'])->name('gym-classes.cancel');
 
-    // only for staff and admin
     Route::middleware(['role:staff,admin'])->group(function () {
         Route::get('gym-classes/create', [GymClassController::class, 'create'])->name('gym-classes.create');
         Route::post('gym-classes', [GymClassController::class, 'store'])->name('gym-classes.store');
@@ -236,6 +240,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/members/create', [App\Http\Controllers\MemberController::class, 'create'])->name('members.create')->middleware('role:admin,staff');
     Route::post('/members', [App\Http\Controllers\MemberController::class, 'store'])->name('members.store')->middleware('role:admin,staff');
     Route::get('/members/{member}', [App\Http\Controllers\MemberController::class, 'show'])->name('members.show')->middleware('role:admin,staff');
+    Route::delete('/members/{member}', [App\Http\Controllers\MemberController::class, 'destroy'])->name('members.destroy')->middleware('role:admin,staff');
 
     // Payment routes
     Route::get('/payments', [App\Http\Controllers\PaymentController::class, 'index'])->name('payments.index')->middleware('role:admin');
@@ -244,11 +249,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payments/{payment}', [App\Http\Controllers\PaymentController::class, 'show'])->name('payments.show');
     Route::post('/process-payment', [App\Http\Controllers\PaymentController::class, 'process'])->name('payments.process');
 
-    // Transaction routes
+
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index')->middleware('role:admin');
     Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     Route::put('/transactions/{transaction}', [TransactionController::class, 'update'])->name('transactions.update')->middleware('role:admin');
+
+
+    Route::get('/subscriptions', [App\Http\Controllers\SubscriptionController::class, 'index'])->name('subscriptions.index')->middleware('role:admin');
+    Route::get('/subscriptions/create', [App\Http\Controllers\SubscriptionController::class, 'create'])->name('subscriptions.create')->middleware('role:admin');
+    Route::post('/subscriptions', [App\Http\Controllers\SubscriptionController::class, 'store'])->name('subscriptions.store')->middleware('role:admin');
+    Route::get('/subscriptions/{subscription}', [App\Http\Controllers\SubscriptionController::class, 'show'])->name('subscriptions.show')->middleware('role:admin');
+    Route::get('/subscriptions/{subscription}/edit', [App\Http\Controllers\SubscriptionController::class, 'edit'])->name('subscriptions.edit')->middleware('role:admin');
+    Route::put('/subscriptions/{subscription}', [App\Http\Controllers\SubscriptionController::class, 'update'])->name('subscriptions.update')->middleware('role:admin');
+    Route::delete('/subscriptions/{subscription}', [App\Http\Controllers\SubscriptionController::class, 'destroy'])->name('subscriptions.destroy')->middleware('role:admin');
+    Route::get('/my-subscription', [App\Http\Controllers\SubscriptionController::class, 'mySubscription'])->name('my-subscription');
 });
 
 require __DIR__.'/settings.php';

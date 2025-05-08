@@ -36,15 +36,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         });
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            post(route('login'), {
-                onFinish: () => reset('password'),
-                preserveScroll: true,
-            });
-        }
-    };
 
     return (
         <AuthLayout title="Masuk ke akun Anda" description="Masukkan email dan kata sandi Anda di bawah ini untuk masuk">
@@ -63,7 +54,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             autoComplete="email"
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
-                            onKeyDown={handleKeyDown}
                             placeholder="email@contoh.com"
                         />
                         <InputError message={errors.email} />
@@ -86,7 +76,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             autoComplete="current-password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
-                            onKeyDown={handleKeyDown}
                             placeholder="Kata Sandi"
                         />
                         <InputError message={errors.password} />

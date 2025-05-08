@@ -266,9 +266,11 @@ export default function Dashboard() {
                                         <p className="text-sm text-muted-foreground">{gymClass.day}, {gymClass.time}</p>
                                         <p className="text-xs text-muted-foreground">Instruktur: {gymClass.instructor}</p>
                                     </div>
-                                    <button className="rounded-md bg-red-800 px-3 py-1 text-sm font-medium text-white">
-                                        Pesan
-                                    </button>
+                                    {subscription && subscription.status === 'Aktif' && (
+                                        <button className="rounded-md bg-red-800 px-3 py-1 text-sm font-medium text-white">
+                                            Pesan
+                                        </button>
+                                    )}
                                 </div>
                             ))}
                         </div>

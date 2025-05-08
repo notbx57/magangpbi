@@ -52,9 +52,11 @@ type FormData = {
 }
 
 export default function GymClassesIndex() {
-    const { classes, userRole, bookedClassIds } = usePage<PageProps>().props;
+    const { classes: initialClasses, userRole, bookedClassIds } = usePage<PageProps>().props;
     const [showAddClassForm, setShowAddClassForm] = useState(false);
+    const [classes, setClasses] = useState(initialClasses);
     const isStaffOrAdmin = userRole === 'staff' || userRole === 'admin';
+    const isMember = userRole === 'member';
 
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
         name: '',
@@ -77,15 +79,55 @@ export default function GymClassesIndex() {
         });
     };
 
-    const handleBookClass = (classId: number) => {
+    const handleBookClass = (classId: number, gymClass: GymClass) => {
+        // Only allow members to book classes
+        if (!isMember) {
+            alert('Anda harus menjadi anggota untuk memesan kelas.');
+            return;
+        }
+
+        // Check if class still has capacity
+        if (gymClass.capacity <= 0) {
+            alert('Kelas ini sudah penuh.');
+            return;
+        }
+
         if (confirm('Pesan kelas ini?')) {
             router.post(route('gym-classes.book', classId));
+
+            // Update local state to reflect capacity change
+            // The actual update will be handled by the backend
+            const updatedClasses = {
+                ...classes,
+                data: classes.data.map(cls =>
+                    cls.id === classId
+                        ? { ...cls, capacity: cls.capacity - 1 }
+                        : cls
+                )
+            };
+
+            // Update local state to reflect UI changes immediately
+            setClasses(updatedClasses);
         }
     };
 
     const handleCancelBooking = (classId: number) => {
         if (confirm('Apakah Anda yakin ingin membatalkan pemesanan untuk kelas ini?')) {
             router.delete(route('gym-classes.cancel', classId));
+
+            // Update local state to reflect capacity change
+            // The actual update will be handled by the backend
+            const updatedClasses = {
+                ...classes,
+                data: classes.data.map(cls =>
+                    cls.id === classId
+                        ? { ...cls, capacity: cls.capacity + 1 }
+                        : cls
+                )
+            };
+
+            // Update local state to reflect UI changes immediately
+            setClasses(updatedClasses);
         }
     };
 
@@ -291,12 +333,23 @@ export default function GymClassesIndex() {
                                                             Batalkan Pemesanan
                                                         </button>
                                                     ) : gymClass.is_active ? (
-                                                        <button
-                                                            onClick={() => handleBookClass(gymClass.id)}
-                                                            className="rounded-md bg-red-800 px-3 py-1 text-sm font-medium text-white"
-                                                        >
-                                                            Pesan Kelas
-                                                        </button>
+                                                        isMember ? (
+                                                            <button
+                                                                onClick={() => handleBookClass(gymClass.id, gymClass)}
+                                                                className={`rounded-md px-3 py-1 text-sm font-medium ${
+                                                                    gymClass.capacity > 0
+                                                                        ? 'bg-red-800 text-white'
+                                                                        : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                                                                }`}
+                                                                disabled={gymClass.capacity <= 0}
+                                                            >
+                                                                {gymClass.capacity > 0 ? 'Pesan Kelas' : 'Kelas Penuh'}
+                                                            </button>
+                                                        ) : (
+                                                            <span className="text-gray-500 text-sm italic">
+                                                                Hanya untuk anggota
+                                                            </span>
+                                                        )
                                                     ) : (
                                                         <span className="text-gray-500 text-sm italic">
                                                             Kelas tidak aktif

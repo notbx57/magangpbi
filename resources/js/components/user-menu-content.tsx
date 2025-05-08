@@ -2,7 +2,7 @@ import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSep
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { type User } from '@/types';
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { LogOut, Settings, Menu } from 'lucide-react';
 
 interface UserMenuContentProps {
@@ -16,17 +16,24 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
     const handleLogout = () => {
         cleanup();
 
-        // Get CSRF token
-        const token = document.head.querySelector('meta[name="csrf-token"]');
-        const csrfToken = token ? token.getAttribute('content') : '';
+        // Create a form to properly handle CSRF protection
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = route('logout');
 
-        // Post to logout route with CSRF token
-        router.post(route('logout'), {}, {
-            headers: {
-                'X-CSRF-TOKEN': csrfToken || ''
-            },
-            onFinish: () => router.flushAll()
-        });
+        // Add the CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+        }
+
+        // Add the form to the document and submit it
+        document.body.appendChild(form);
+        form.submit();
     };
 
     return (

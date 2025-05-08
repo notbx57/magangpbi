@@ -39,12 +39,23 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        // Check if user has active subscription
+        $hasActiveSubscription = false;
+        $user = $request->user();
+
+        if ($user && $user->role === 'member') {
+            $hasActiveSubscription = \App\Models\Subscription::where('user_id', $user->id)
+                ->where('status', 'active')
+                ->exists();
+        }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
+                'hasActiveSubscription' => $hasActiveSubscription,
             ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),

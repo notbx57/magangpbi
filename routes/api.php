@@ -21,3 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Subscription management API endpoints
 Route::middleware('auth:sanctum')->put('/subscriptions/{id}', [SubscriptionController::class, 'updateStatus']);
+
+// User management API endpoints
+Route::middleware(['auth:sanctum', 'role:admin'])->delete('/users/{id}', [\App\Http\Controllers\AdminDashboardController::class, 'deleteUser']);

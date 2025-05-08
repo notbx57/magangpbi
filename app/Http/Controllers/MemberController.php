@@ -130,4 +130,22 @@ class MemberController extends Controller
             }),
         ]);
     }
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+
+
+        if ($user->role !== 'member') {
+            return back()->with('error', 'Only member accounts can be deleted through this method.');
+        }
+
+        $user->subscriptions()->delete();
+        $user->attendances()->delete();
+        $user->payments()->delete();
+
+       
+        $user->delete();
+
+        return redirect()->route('dashboard')->with('success', 'Member deleted successfully');
+    }
 }

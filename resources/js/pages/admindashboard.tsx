@@ -2,7 +2,6 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage, Link } from '@inertiajs/react';
 import { useState } from 'react';
-import axios from 'axios';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -19,6 +18,9 @@ type Stats = {
 }
 
 type User = {
+    id: number;
+    name: string;
+    email: string;
     role: string;
 }
 
@@ -50,30 +52,99 @@ type PageProps = {
     };
     subscriptions: Subscription[];
     recentActivities: Activity[];
+    members: User[];
 }
 
 export default function AdminDashboard() {
     const props = usePage<PageProps>().props;
-    const { stats, subscriptions, recentActivities } = props;
+    const { stats, subscriptions, recentActivities, members } = props;
     const [isUpdating, setIsUpdating] = useState<number | null>(null);
+    const [isDeletingUser, setIsDeletingUser] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const handleStatusChange = async (subscriptionId: number, newStatus: 'active' | 'expired' | 'cancelled') => {
         setIsUpdating(subscriptionId);
         setError(null);
 
         try {
-            await axios.put(`/api/subscriptions/${subscriptionId}`, {
-                status: newStatus
-            });
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/subscriptions/${subscriptionId}`;
 
-            // Refresh the page to show updated data
-            window.location.reload();
+
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = 'PUT';
+            form.appendChild(methodInput);
+
+            // Add CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = csrfToken || '';
+            form.appendChild(csrfInput);
+
+            // Add status field
+            const statusInput = document.createElement('input');
+            statusInput.type = 'hidden';
+            statusInput.name = 'status';
+            statusInput.value = newStatus;
+            form.appendChild(statusInput);
+
+            document.body.appendChild(form);
+            form.submit();
+
         } catch (err) {
             setError('Failed to update subscription status. Please try again.');
             console.error(err);
-        } finally {
             setIsUpdating(null);
+        }
+    };
+
+    const handleDeleteUser = async (userId: number) => {
+        if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+            return;
+        }
+
+        setIsDeletingUser(userId);
+        setError(null);
+        setSuccessMessage(null);
+
+        try {
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/members/${userId}`;
+
+
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = 'DELETE';
+            form.appendChild(methodInput);
+
+            // Add CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = csrfToken || '';
+            form.appendChild(csrfInput);
+
+            // Append to body and submit
+            document.body.appendChild(form);
+            form.submit();
+
+        } catch (err) {
+            const errorMsg = err instanceof Error
+                ? err.message
+                : 'Failed to delete user. Please try again.';
+            setError(errorMsg);
+            console.error(err);
+            setIsDeletingUser(null);
         }
     };
 
@@ -271,6 +342,83 @@ export default function AdminDashboard() {
                                     <tr>
                                         <td colSpan={7} className="px-6 py-4 text-center text-sm text-gray-500">
                                             No subscriptions found
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Member Management */}
+                <div className="rounded-xl border p-6 shadow-sm mb-4">
+                    <h3 className="text-xl font-semibold mb-4">Member Management</h3>
+
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+                            {error}
+                        </div>
+                    )}
+
+                    {successMessage && (
+                        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
+                            {successMessage}
+                        </div>
+                    )}
+
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead className="bg-gray-50 dark:bg-gray-800">
+                                <tr>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        Name
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        Email
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        Role
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
+                                {members && members.length > 0 ? (
+                                    members.filter(member => member.role === 'member').map((member) => (
+                                        <tr key={member.id}>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                {member.name}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                {member.email}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                    {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                <div className="flex space-x-2">
+                                                    <Link href={`/members/${member.id}`} className="text-blue-600 hover:text-blue-900">
+                                                        View
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => handleDeleteUser(member.id)}
+                                                        disabled={isDeletingUser === member.id}
+                                                        className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                                                    >
+                                                        {isDeletingUser === member.id ? 'Deleting...' : 'Delete'}
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">
+                                            No members found
                                         </td>
                                     </tr>
                                 )}

@@ -6,6 +6,8 @@ use App\Models\Subscription;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Payment;
+use App\Models\Attendance;
+use App\Models\ClassBooking;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -132,4 +134,48 @@ class AdminDashboardController extends Controller
 
             return substr($initials, 0, 2);
         }
-}
+
+        /**
+         * Delete a user and all associated records
+         *
+         * @param Request $request
+         * @param int $id
+         * @return \Illuminate\Http\JsonResponse
+         */
+        public function deleteUser(Request $request, $id)
+        {
+            try {
+                $user = User::findOrFail($id);
+
+                // Don't allow admins to delete themselves
+                if ($request->user()->id == $id) {
+                    return response()->json(['message' => 'You cannot delete your own account'], 403);
+                }
+
+                // Start a database transaction to ensure all related records are deleted successfully
+                DB::beginTransaction();
+
+                try {
+                    // Delete all related records
+                    ClassBooking::where('user_id', $id)->delete();
+                    Attendance::where('user_id', $id)->delete();
+                    Payment::where('user_id', $id)->delete();
+                    Subscription::where('user_id', $id)->delete();
+
+                    // Delete the user
+                    $user->delete();
+
+                    // Commit the transaction if all deletions succeed
+                    DB::commit();
+
+                    return response()->json(['message' => 'User deleted successfully']);
+                } catch (\Exception $e) {
+                    // Rollback the transaction if any deletion fails
+                    DB::rollback();
+                    throw $e;
+                }
+            } catch (\Exception $e) {
+                return response()->json(['message' => 'Failed to delete user: ' . $e->getMessage()], 500);
+            }
+        }
+    }
