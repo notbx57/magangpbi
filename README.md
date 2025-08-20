@@ -1,10 +1,16 @@
+<img width="403" height="515" alt="image" src="https://github.com/user-attachments/assets/75199c37-bf1b-46c3-9225-3221d594e805" />
+
 **MAJOR REWRITE : POWERGYM** 💪
 
 Changelogs :
 - Ditulis dari awal karena menggunakan React (Inertia)
+- Responsive by Default
 - Security, Middleware menggunakan Laravel Auth (atau lebih dikenal laravel breeze)
 - CRUD Multirole Member, Staff, Admin
 - Payment gateway masih simple
+
+<img width="409" height="833" alt="image" src="https://github.com/user-attachments/assets/25f1f39a-894b-4723-98fe-db8ecca6d944" />
+
 
 Instruksi :
 1. clone github
