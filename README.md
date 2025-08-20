@@ -12,9 +12,10 @@ Instruksi :
 3. npm i
 4. php artisan key:generate
 5. php artisan migrate:fresh
-6. npm run build (untuk gzip)
-7. npm run dev (untuk menjalankan react)
-8. php artisan serve
+6. php artisan db:seed
+7. npm run build (untuk gzip)
+8. npm run dev (untuk menjalankan react)
+9. php artisan serve
 
 Teknologi :
 
