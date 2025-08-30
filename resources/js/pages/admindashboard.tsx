@@ -67,7 +67,7 @@ export default function AdminDashboard() {
     const handleStatusChange = async (subscriptionId: number, newStatus: 'active' | 'expired' | 'cancelled') => {
         setIsUpdating(subscriptionId);
         setError(null);
-    
+        // kalau expired
         if (newStatus === 'expired') {
             if (!confirm('Apakah anda yakin untuk menghapus langganan member ini ? Tindakan ini tidak dapat dibatalkan.')) {
                 setIsUpdating(null);
