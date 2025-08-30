@@ -20,16 +20,16 @@ class SampleMemberSeeder extends Seeder
     {
         // Create member user
         $user = User::create([
-            'name' => 'John Member',
+            'name' => 'Ahmad Member Setia',
             'email' => 'member@gym.com',
             'password' => Hash::make('password'),
             'role' => 'member',
             'email_verified_at' => now(),
-            'phone_number' => '555-123-4567',
+            'phone_number' => '08121212112',
             'date_of_birth' => now()->subYears(25),
-            'address' => '123 Fitness St, Exercise City',
-            'emergency_contact' => 'Jane Member',
-            'emergency_contact_phone' => '555-987-6543',
+            'address' => 'Jl Warungkayu No 02',
+            'emergency_contact' => 'Ahmad',
+            'emergency_contact_phone' => '0812121212122',
         ]);
 
         // Create subscription

@@ -6,6 +6,7 @@ use App\Models\GymClass;
 use App\Models\ClassBooking;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class GymClassController extends Controller
 {
@@ -17,7 +18,7 @@ class GymClassController extends Controller
         $classes = GymClass::latest()->paginate(10);
         
         // Check if user is logged in
-        $user = auth()->user();
+        $user = Auth::user();
         $role = $user->role ?? 'guest';
         
         // Get user's booked classes if they're logged in
@@ -71,7 +72,7 @@ class GymClassController extends Controller
     public function show(GymClass $gymClass)
     {
         // Check if the user has booked this class
-        $user = auth()->user();
+        $user = Auth::user();
         $isBooked = false;
         
         if ($user) {
@@ -140,7 +141,7 @@ class GymClassController extends Controller
      */
     public function book(GymClass $gymClass)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         
         // Check if user has already booked this class
         $existingBooking = ClassBooking::where('user_id', $user->id)
@@ -173,7 +174,7 @@ class GymClassController extends Controller
      */
     public function cancelBooking(GymClass $gymClass)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         
         $booking = ClassBooking::where('user_id', $user->id)
             ->where('gym_class_id', $gymClass->id)

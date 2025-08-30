@@ -95,8 +95,6 @@ export default function GymClassesIndex() {
         if (confirm('Pesan kelas ini?')) {
             router.post(route('gym-classes.book', classId));
 
-            // Update local state to reflect capacity change
-            // The actual update will be handled by the backend
             const updatedClasses = {
                 ...classes,
                 data: classes.data.map(cls =>

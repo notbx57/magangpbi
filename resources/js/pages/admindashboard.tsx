@@ -2,6 +2,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage, Link } from '@inertiajs/react';
 import { useState } from 'react';
+import { router } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -41,7 +42,7 @@ type Subscription = {
     plan_name: string;
     start_date: string;
     end_date: string;
-    status: 'active' | 'expired' | 'cancelled';
+    status : 'active' | 'expired' | 'cancelled';
     created_at: string;
 }
 
@@ -66,87 +67,74 @@ export default function AdminDashboard() {
     const handleStatusChange = async (subscriptionId: number, newStatus: 'active' | 'expired' | 'cancelled') => {
         setIsUpdating(subscriptionId);
         setError(null);
-
-        try {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/subscriptions/${subscriptionId}`;
-
-
-            const methodInput = document.createElement('input');
-            methodInput.type = 'hidden';
-            methodInput.name = '_method';
-            methodInput.value = 'PUT';
-            form.appendChild(methodInput);
-
-            // Add CSRF token
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = '_token';
-            csrfInput.value = csrfToken || '';
-            form.appendChild(csrfInput);
-
-            // Add status field
-            const statusInput = document.createElement('input');
-            statusInput.type = 'hidden';
-            statusInput.name = 'status';
-            statusInput.value = newStatus;
-            form.appendChild(statusInput);
-
-            document.body.appendChild(form);
-            form.submit();
-
-        } catch (err) {
-            setError('Failed to update subscription status. Please try again.');
-            console.error(err);
-            setIsUpdating(null);
+    
+        if (newStatus === 'expired') {
+            if (!confirm('Apakah anda yakin untuk menghapus langganan member ini ? Tindakan ini tidak dapat dibatalkan.')) {
+                setIsUpdating(null);
+                return;
+            }
+    
+            router.delete(
+                `/subscriptions/${subscriptionId}`,
+                {
+                    onSuccess: () => {
+                        setSuccessMessage('Subscription deleted successfully.');
+                        router.reload({ only: ['subscriptions'] });
+                    },
+                    onError: (errors) => {
+                        setError('Failed to delete subscription. Please try again.');
+                        console.error(errors);
+                    },
+                    onFinish: () => {
+                        setIsUpdating(null);
+                    },
+                }
+            );
+        } else {
+            router.put(
+                `/subscriptions/${subscriptionId}`,
+                { status: newStatus },
+                {
+                    onSuccess: () => {
+                        setSuccessMessage(`Subscription updated to ${newStatus} successfully.`);
+                        router.reload({ only: ['subscriptions'] });
+                    },
+                    onError: (errors) => {
+                        setError('Failed to update subscription status. Please try again.');
+                        console.error(errors);
+                    },
+                    onFinish: () => {
+                        setIsUpdating(null);
+                    },
+                }
+            );
         }
     };
 
-    const handleDeleteUser = async (userId: number) => {
-        if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+    function handleDeleteUser(userId: number) {
+        if (!confirm("Apakah anda yakin untuk menghapus member ini ? Tindakan ini tidak dapat dibatalkan.")) {
             return;
         }
-
+    
         setIsDeletingUser(userId);
         setError(null);
         setSuccessMessage(null);
-
-        try {
-
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/members/${userId}`;
-
-
-            const methodInput = document.createElement('input');
-            methodInput.type = 'hidden';
-            methodInput.name = '_method';
-            methodInput.value = 'DELETE';
-            form.appendChild(methodInput);
-
-            // Add CSRF token
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = '_token';
-            csrfInput.value = csrfToken || '';
-            form.appendChild(csrfInput);
-
-            // Append to body and submit
-            document.body.appendChild(form);
-            form.submit();
-
-        } catch (err) {
-            const errorMsg = err instanceof Error
-                ? err.message
-                : 'Failed to delete user. Please try again.';
-            setError(errorMsg);
-            console.error(err);
-            setIsDeletingUser(null);
-        }
-    };
+    
+        router.delete(`/members/${userId}`, {
+            onSuccess: () => {
+                setSuccessMessage('User deleted successfully.');
+                // Optionally refresh the members list
+                router.reload({ only: ['members'] });
+            },
+            onError: (errors) => {
+                setError('Failed to delete user. Please try again.');
+                console.error(errors);
+            },
+            onFinish: () => {
+                setIsDeletingUser(null);
+            }
+        });
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

@@ -50,7 +50,7 @@ export default function StaffDashboard() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div className="flex flex-col gap-2 rounded-xl border p-6 shadow-sm">
                         <h3 className="text-xl font-semibold">Recent Check-ins</h3>
                         <div className="mt-4">
@@ -94,7 +94,7 @@ export default function StaffDashboard() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </AppLayout>
     );

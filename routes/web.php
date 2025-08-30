@@ -12,6 +12,8 @@ use App\Models\GymClass;
 use App\Http\Controllers\GymClassController;
 use App\Http\Controllers\TransactionController;
 
+
+//render react pake inertia
 Route::get('/', function () {
     $plans = MembershipPlan::where('is_active', true)->get();
 
@@ -32,7 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         if ($role === 'admin') {
             $totalRevenue = Payment::where('status', 'completed')->sum('amount');
 
-            // Get all members
+            // Get semua member
             $members = User::where('role', 'member')
                 ->get(['id', 'name', 'email', 'role']);
 
@@ -160,7 +162,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'streak' => $streak
             ];
 
-            // Get upcoming classes
+            // Get Kelas yang akan datang
             $today = strtolower(date('l'));
             $tomorrow = strtolower(date('l', strtotime('+1 day')));
             $dayAfterTomorrow = strtolower(date('l', strtotime('+2 days')));

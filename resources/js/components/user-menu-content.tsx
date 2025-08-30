@@ -2,8 +2,8 @@ import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSep
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { type User } from '@/types';
-import { Link, usePage } from '@inertiajs/react';
-import { LogOut, Settings, Menu } from 'lucide-react';
+import { Link, usePage, router } from '@inertiajs/react';
+import { LogOut, Settings, Menu, MessageCircle } from 'lucide-react';
 
 interface UserMenuContentProps {
     user: User;
@@ -15,25 +15,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
 
     const handleLogout = () => {
         cleanup();
-
-        // Create a form to properly handle CSRF protection
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = route('logout');
-
-        // Add the CSRF token
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-        if (csrfToken) {
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = '_token';
-            csrfInput.value = csrfToken;
-            form.appendChild(csrfInput);
-        }
-
-        // Add the form to the document and submit it
-        document.body.appendChild(form);
-        form.submit();
+        router.post(route('logout'));
     };
 
     return (
@@ -59,6 +41,19 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
                         Pengaturan
                     </Link>
                 </DropdownMenuItem>
+                {(auth.user.role === 'premium' || auth.user.role === 'gymbro') && (
+                    <DropdownMenuItem>
+                        <a
+                            href="https://discord.gg/v9xbAp9p"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center w-full"
+                        >
+                            <MessageCircle className="mr-2" />
+                            Discord
+                        </a>
+                    </DropdownMenuItem>
+                )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

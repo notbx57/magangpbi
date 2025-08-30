@@ -8,15 +8,16 @@ use App\Models\Subscription;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
     /**
      * Display a listing of the payments.
      */
-    public function index()
-    {
+    public function index() {
         // Only admin can view all payments
         if (Auth::user()->role !== 'admin') {
             return redirect()->route('dashboard');
@@ -24,7 +25,7 @@ class PaymentController extends Controller
 
         $payments = Payment::with(['user', 'subscription.membershipPlan'])
             ->latest()
-            ->get();
+            ->paginate(20);
 
         return Inertia::render('Payments/Index', [
             'payments' => $payments
@@ -46,30 +47,30 @@ class PaymentController extends Controller
     /**
      * Store a newly created payment in storage.
      */
-    public function store(Request $request)
-    {
-        $user = Auth::user();
+    // public function store(Request $request)
+    // {
+    //     $user = Auth::user();
 
-        $request->validate([
-            'plan_id' => 'required|exists:membership_plans,id',
-            'payment_method' => 'required|string|in:credit_card,bank_transfer',
-        ]);
+    //     $request->validate([
+    //         'plan_id' => 'required|exists:membership_plans,id',
+    //         'payment_method' => 'required|string|in:credit_card,bank_transfer',
+    //     ]);
 
-        // Get the plan
-        $plan = MembershipPlan::findOrFail($request->plan_id);
+    //     // Get the plan
+    //     $plan = MembershipPlan::findOrFail($request->plan_id);
 
-        // Create a transaction record
-        $transaction = Transaction::create([
-            'user_id' => $user->id,
-            'plan_id' => $plan->id,
-            'amount' => $plan->price,
-            'payment_method' => $request->payment_method,
-            'status' => 'pending',
-        ]);
+    //     // Create a transaction record
+    //     $transaction = Transaction::create([
+    //         'user_id' => $user->id,
+    //         'plan_id' => $plan->id,
+    //         'amount' => $plan->price,
+    //         'payment_method' => $request->payment_method,
+    //         'status' => 'pending',
+    //     ]);
 
-        // Redirect back to dashboard with success message
-        return redirect()->route('dashboard')->with('success', 'Pembayaran berhasil diproses dan sedang menunggu persetujuan');
-    }
+    //     // Redirect back to dashboard with success message
+    //     return redirect()->route('dashboard')->with('success', 'Pembayaran berhasil diproses dan sedang menunggu persetujuan');
+    // }
 
     /**
      * Display the specified payment.
@@ -98,10 +99,10 @@ class PaymentController extends Controller
             'payment_method' => 'required|string|in:credit_card,bank_transfer',
         ]);
 
-        // Find the plan by name
+        // find nama plan
         $plan = MembershipPlan::where('name', $request->plan_name)->firstOrFail();
 
-        // Create a transaction with approved status (for direct processing)
+        // implementasi sederhana bypass payment gateway
         $transaction = Transaction::create([
             'user_id' => $user->id,
             'plan_id' => $plan->id,
@@ -110,7 +111,6 @@ class PaymentController extends Controller
             'status' => 'approved',
         ]);
 
-        // Create a subscription
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'membership_plan_id' => $plan->id,
@@ -119,7 +119,6 @@ class PaymentController extends Controller
             'status' => 'active'
         ]);
 
-        // Create a payment record
         Payment::create([
             'user_id' => $user->id,
             'subscription_id' => $subscription->id,

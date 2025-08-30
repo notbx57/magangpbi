@@ -12,7 +12,7 @@ export function AppSidebar() {
     const isUserMember = auth.user.role === 'member';
     const hasActiveSubscription = auth.hasActiveSubscription;
 
-    // For members without active subscription, show a different sidebar with subscription message
+    // Jika user belum subscribe, return sidebar harus subscribe
     if (isUserMember && !hasActiveSubscription) {
         return (
             <Sidebar collapsible="icon" variant="inset">
@@ -31,9 +31,9 @@ export function AppSidebar() {
                 <SidebarContent className="flex flex-col items-center justify-center p-4">
                     <div className="text-center">
                         <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">Subscription Required</h3>
+                        <h3 className="text-lg font-semibold mb-2">Anda belum Berlangganan</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                            Please activate your membership to access all gym features.
+                            Harap berlangganan untuk akses penuh fitur PowerGYM.
                         </p>
                         <Link
                             href={route('payments.create')}

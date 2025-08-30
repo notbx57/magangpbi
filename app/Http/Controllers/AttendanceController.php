@@ -6,6 +6,7 @@ use App\Models\Attendance;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
@@ -57,10 +58,10 @@ class AttendanceController extends Controller
      */
     public function show(string $id)
     {
-        $attendance = Attendance::with('user')->findOrFail($id);
+        $attendance1 = Attendance::with('user')->findOrFail($id);
         
         return Inertia::render('Attendance/Show', [
-            'attendance' => $attendance
+            'attendance' => $attendance1
         ]);
     }
 
@@ -69,11 +70,11 @@ class AttendanceController extends Controller
      */
     public function edit(string $id)
     {
-        $attendance = Attendance::findOrFail($id);
+        $attendance2 = Attendance::findOrFail($id);
         $members = User::where('role', 'member')->get();
         
         return Inertia::render('Attendance/Edit', [
-            'attendance' => $attendance,
+            'attendance' => $attendance2,
             'members' => $members
         ]);
     }
@@ -83,7 +84,7 @@ class AttendanceController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $attendance = Attendance::findOrFail($id);
+        $attendance3 = Attendance::findOrFail($id);
         
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -91,7 +92,7 @@ class AttendanceController extends Controller
             'check_out' => 'nullable|date|after:check_in',
         ]);
         
-        $attendance->update($validated);
+        $attendance3->update($validated);
         
         return redirect()->route('attendance.index')
             ->with('success', 'Attendance record updated successfully.');
@@ -156,7 +157,7 @@ class AttendanceController extends Controller
      */
     public function myAttendance()
     {
-        $attendances = Attendance::where('user_id', auth()->id())
+        $attendances = Attendance::where('user_id', Auth::id())
             ->latest()
             ->paginate(20);
             

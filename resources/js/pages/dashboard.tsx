@@ -69,9 +69,6 @@ export default function Dashboard() {
             price: 4.99,
             features: [
                 'Basic access to gym facilities',
-                'Standard hours only (6AM-10PM)',
-                'Access to locker rooms',
-                'Free water refill'
             ]
         },
         {
@@ -79,10 +76,7 @@ export default function Dashboard() {
             price: 15.99,
             features: [
                 'Full access to gym facilities',
-                'Access to group classes',
-                'Extended hours (5AM-11PM)',
-                'Towel service',
-                'Locker rental included'
+                'Akses Discord'
             ]
         },
         {
@@ -90,11 +84,7 @@ export default function Dashboard() {
             price: 29.99,
             features: [
                 'Full 24/7 access to all facilities',
-                'Personal trainer sessions (2x/month)',
-                'Unlimited group classes',
-                'Premium locker with laundry service',
-                'Protein shake after workout',
-                'Guest passes (2/month)'
+                'Akses Private Server'
             ]
         }
     ];
@@ -174,7 +164,7 @@ export default function Dashboard() {
                     </div>
                 )}
                 {/* Welcome Banner */}
-                <div className="bg-blue-800 text-white p-6 rounded-xl shadow-md">
+                <div className="bg-red-800 text-white p-6 rounded-xl shadow-md">
                     <h1 className="text-2xl font-bold">Selamat datang, {props.auth.user.name || 'Member'}!</h1>
                     <p className="mt-1">Ini adalah dashboard GYM Membership Anda</p>
                 </div>
@@ -279,6 +269,7 @@ export default function Dashboard() {
                     )}
                     <div className="mt-4 text-center">
                         <button
+                            onClick={() => router.visit('/gym-classes')}
                             className={`rounded-md border px-4 py-2 text-sm font-medium ${
                                 !subscription
                                 ? 'border-gray-300 text-gray-400 cursor-not-allowed'

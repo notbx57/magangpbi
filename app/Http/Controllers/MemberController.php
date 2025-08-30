@@ -25,7 +25,6 @@ class MemberController extends Controller
 
     public function create()
     {
-        // Get membership plans for the dropdown
         $membershipPlans = \App\Models\MembershipPlan::where('is_active', true)->get();
 
         return Inertia::render('Members/Create', [
@@ -35,7 +34,7 @@ class MemberController extends Controller
 
     public function store(Request $request)
     {
-        // Validate the request
+ 
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -45,7 +44,6 @@ class MemberController extends Controller
             'membership_plan_id' => 'nullable|exists:membership_plans,id',
         ]);
 
-        // Create the user with member role
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -55,11 +53,9 @@ class MemberController extends Controller
             'role' => 'member',
         ]);
 
-        // If a membership plan was selected, create a subscription
         if ($request->membership_plan_id) {
             $plan = \App\Models\MembershipPlan::findOrFail($request->membership_plan_id);
 
-            // Create subscription
             Subscription::create([
                 'user_id' => $user->id,
                 'membership_plan_id' => $plan->id,
@@ -91,19 +87,16 @@ class MemberController extends Controller
     {
         $user = Auth::user();
 
-        // Get user's active subscription
         $subscription = Subscription::where('user_id', $user->id)
             ->where('status', 'active')
             ->with('membershipPlan')
             ->latest()
             ->first();
 
-        // Get recent attendance
         $recentAttendance = Attendance::where('user_id', $user->id)
             ->latest()
             ->first();
 
-        // Get upcoming classes
         $today = strtolower(date('l'));
         $upcomingClasses = \App\Models\GymClass::where('is_active', true)
             ->where('day_of_week', $today)

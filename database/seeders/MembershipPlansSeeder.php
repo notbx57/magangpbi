@@ -15,22 +15,25 @@ class MembershipPlansSeeder extends Seeder
     {
         $plans = [
             [
+                'id' => 1,
                 'name' => 'Basic',
-                'description' => 'Basic access to gym facilities during standard hours.',
+                'description' => 'Akses Basic ke semua fitur gym',
                 'price' => 4.99,
                 'duration_days' => 30,
                 'is_active' => true,
             ],
             [
+                'id' => 2,
                 'name' => 'Premium',
-                'description' => 'Full access to gym facilities and group classes.',
+                'description' => 'Akses penuh ke kelas gym dan grup discord',
                 'price' => 15.99,
                 'duration_days' => 30,
                 'is_active' => true,
             ],
             [
+                'id' => 3,
                 'name' => 'GymBro',
-                'description' => 'Full 24/7 access to all facilities with personal trainer sessions.',
+                'description' => 'Akses penuh ke kelas gym dan grup discord dengan personal trainer.',
                 'price' => 29.99,
                 'duration_days' => 30,
                 'is_active' => true,
